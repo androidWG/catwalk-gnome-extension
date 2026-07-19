@@ -1,9 +1,10 @@
 {
     "uuid": "catwalk@annarodrigues.net",
-    "name": "Catwalk - Keyboard Toggle",
-    "description": "Easily toggle the internal laptop keyboard on and off from the Quick Settings menu",
-    "shell-version": ["47", "48", "49", "50"],
-    "url": "",
+    "name": "Catwalk | Quick Settings keyboard toggle for laptops",
+    "description": "Easily toggle your internal laptop keyboard on and off from the Quick Settings menu. Safe for you and your cat!",
+    "shell-version": ["50"],
+    "url": "https://github.com/androidWG/catwalk-annarodrigues.net",
     "gettext-domain": "catwalk@annarodrigues.net",
-    "version": 1
+    "version": 1,
+    "version-name": "1.0"
 }
