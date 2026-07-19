@@ -1,8 +1,8 @@
-import Gio from 'gi://Gio';
+import Gio from "gi://Gio";
 
 const INHIBITED_PATHS = [
-    '/sys/devices/platform/i8042/serio0/input/input2/inhibited',
-    '/sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/input/input24/inhibited',
+    "/sys/devices/platform/i8042/serio0/input/input2/inhibited",
+    "/sys/devices/pci0000:00/0000:00:1f.0/PNP0C09:00/VPC2004:00/input/input24/inhibited",
 ];
 
 const encoder = new TextEncoder();
@@ -13,11 +13,6 @@ let _monitors = [];
 function _writeSysfs(path, value) {
     const file = Gio.File.new_for_path(path);
     try {
-        /*
-         * open_readwrite() returns a Gio.FileIOStream, not an OutputStream.
-         * Gio.FileIOStream has no .write() — use get_output_stream() first,
-         * then write_all() which accepts Uint8Array in GJS.
-         */
         const ioStream = file.open_readwrite(null);
         const outStream = ioStream.get_output_stream();
         outStream.write_all(encoder.encode(value), null);
@@ -33,7 +28,7 @@ function _readSysfs(path) {
         const [ok, contents] = file.load_contents(null);
         if (ok) {
             const text = decoder.decode(contents);
-            return text.trim() === '1';
+            return text.trim() === "1";
         }
     } catch (e) {
         logError(e, `keyboardManager: cannot read ${path}`);
@@ -49,11 +44,11 @@ function _canWrite(path) {
             return false;
         }
         const info = file.query_info(
-            'access::can-write',
+            "access::can-write",
             Gio.FileQueryInfoFlags.NONE,
             null,
         );
-        return info.get_attribute_boolean('access::can-write');
+        return info.get_attribute_boolean("access::can-write");
     } catch (e) {
         logError(e, `keyboardManager: cannot stat ${path}`);
         return false;
@@ -61,11 +56,6 @@ function _canWrite(path) {
 }
 
 export const keyboardManager = {
-    /*
-     * Returns true if the internal keyboard is currently inhibited (disabled).
-     * Checks all inhibited paths; if any reports inhibited, we consider the
-     * keyboard disabled. Both paths are always toggled together by setInhibited().
-     */
     isInhibited() {
         for (const path of INHIBITED_PATHS) {
             if (_readSysfs(path)) {
@@ -76,14 +66,14 @@ export const keyboardManager = {
     },
 
     setInhibited(inhibited) {
-        const value = inhibited ? '1\n' : '0\n';
+        const value = inhibited ? "1\n" : "0\n";
         for (const path of INHIBITED_PATHS) {
             _writeSysfs(path, value);
         }
     },
 
     probe() {
-        const writable = INHIBITED_PATHS.map(path => _canWrite(path));
+        const writable = INHIBITED_PATHS.map((path) => _canWrite(path));
         return writable.every(Boolean);
     },
 
@@ -92,19 +82,19 @@ export const keyboardManager = {
             const file = Gio.File.new_for_path(path);
             const monitor = file.monitor_file(Gio.FileMonitorFlags.NONE, null);
             const signalId = monitor.connect(
-                'changed',
+                "changed",
                 (_mon, _f, _other, eventType) => {
                     if (eventType === Gio.FileMonitorEvent.CHANGES_DONE_HINT) {
                         callback();
                     }
                 },
             );
-            _monitors.push({monitor, signalId});
+            _monitors.push({ monitor, signalId });
         }
     },
 
     stopMonitor() {
-        for (const {monitor, signalId} of _monitors) {
+        for (const { monitor, signalId } of _monitors) {
             monitor.disconnect(signalId);
             monitor.cancel();
         }
