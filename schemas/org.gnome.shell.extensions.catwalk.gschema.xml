@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.catwalk"
+          path="/org/gnome/shell/extensions/catwalk/">
+    <key name="toggle-keyboard-shortcut" type="as">
+      <default><![CDATA[['<Super><Shift>k']]]></default>
+      <summary>Toggle internal keyboard</summary>
+      <description>Keyboard shortcut to enable or disable the internal laptop keyboard</description>
+    </key>
+  </schema>
+</schemalist>
