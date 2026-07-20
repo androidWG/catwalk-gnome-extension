@@ -51,6 +51,12 @@ const KeyboardToggle = GObject.registerClass(
             this.checked = false;
             this.subtitle = "Permission denied — run setup-permissions.sh";
         }
+
+        handleExternalToggle(nowInhibited) {
+            this.checked = !nowInhibited;
+            this._updateSubtitle();
+            this._showOSD(!nowInhibited);
+        }
     },
 );
 
