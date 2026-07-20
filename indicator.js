@@ -8,32 +8,34 @@ import { keyboardManager } from "./keyboardManager.js";
 
 const KeyboardToggle = GObject.registerClass(
     class KeyboardToggle extends QuickSettings.QuickToggle {
-        _init() {
+        _init(onIcon, offIcon) {
             super._init({
                 title: "Keyboard",
                 subtitle: "Checking\u2026",
-                iconName: "input-keyboard-symbolic",
+                gicon: onIcon,
                 toggleMode: true,
             });
+
+            this._onIcon = onIcon;
+            this._offIcon = offIcon;
 
             this.connect("clicked", () => {
                 const wasInhibited = keyboardManager.isInhibited();
                 const nowInhibited = !wasInhibited;
                 keyboardManager.setInhibited(nowInhibited);
                 this.checked = !nowInhibited;
-                this._updateSubtitle();
+                this._refreshDisplay();
                 this._showOSD(!nowInhibited);
             });
         }
 
-        _updateSubtitle() {
+        _refreshDisplay() {
+            this.gicon = this.checked ? this._onIcon : this._offIcon;
             this.subtitle = this.checked ? "Keyboard On" : "Keyboard Off";
         }
 
         _showOSD(checked) {
-            const icon = new Gio.ThemedIcon({
-                name: "input-keyboard-symbolic",
-            });
+            const icon = checked ? this._onIcon : this._offIcon;
             const label = checked ? "Keyboard On" : "Keyboard Off";
             const mgr = Main.osdWindowManager;
             if (typeof mgr.showAll === "function")
@@ -44,7 +46,7 @@ const KeyboardToggle = GObject.registerClass(
         syncState() {
             const inhibited = keyboardManager.isInhibited();
             this.checked = !inhibited;
-            this._updateSubtitle();
+            this._refreshDisplay();
         }
 
         setPermissionError() {
@@ -54,7 +56,7 @@ const KeyboardToggle = GObject.registerClass(
 
         handleExternalToggle(nowInhibited) {
             this.checked = !nowInhibited;
-            this._updateSubtitle();
+            this._refreshDisplay();
             this._showOSD(!nowInhibited);
         }
     },
@@ -62,24 +64,39 @@ const KeyboardToggle = GObject.registerClass(
 
 const KeyboardIndicator = GObject.registerClass(
     class KeyboardIndicator extends QuickSettings.SystemIndicator {
-        _init() {
+        _init(extensionObject) {
             super._init();
 
-            this._indicator = this._addIndicator();
-            this._indicator.icon_name = "input-keyboard-symbolic";
+            this._onIcon = new Gio.ThemedIcon({
+                name: "input-keyboard-symbolic",
+            });
+            this._offIcon = new Gio.FileIcon({
+                file: extensionObject.dir.get_child("keyboard-off.svg"),
+            });
 
-            this._toggle = new KeyboardToggle();
+            this._indicator = this._addIndicator();
+            this._indicator.gicon = this._onIcon;
+
+            this._toggle = new KeyboardToggle(this._onIcon, this._offIcon);
             this.quickSettingsItems.push(this._toggle);
 
             const hasPermission = keyboardManager.probe();
             if (hasPermission) {
                 this._toggle.syncState();
+                this._updateIndicatorIcon();
                 keyboardManager.startMonitor(() => {
                     this._toggle.syncState();
+                    this._updateIndicatorIcon();
                 });
             } else {
                 this._toggle.setPermissionError();
             }
+        }
+
+        _updateIndicatorIcon() {
+            this._indicator.gicon = this._toggle.checked
+                ? this._onIcon
+                : this._offIcon;
         }
 
         destroy() {

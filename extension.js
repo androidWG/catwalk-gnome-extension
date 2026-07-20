@@ -9,7 +9,7 @@ import { keyboardManager } from "./keyboardManager.js";
 
 export default class KeyboardToggleExtension extends Extension {
     enable() {
-        this._indicator = new KeyboardIndicator();
+        this._indicator = new KeyboardIndicator(this);
         Main.panel.statusArea.quickSettings.addExternalIndicator(
             this._indicator,
         );
@@ -69,5 +69,6 @@ export default class KeyboardToggleExtension extends Extension {
         keyboardManager.setInhibited(nowInhibited);
 
         this._indicator?._toggle?.handleExternalToggle(nowInhibited);
+        this._indicator?._updateIndicatorIcon?.();
     }
 }
