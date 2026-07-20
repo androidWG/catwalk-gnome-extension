@@ -44,12 +44,14 @@ First package the extension using `gnome-extensions pack`, and
 then install it:
 
 ```bash
-gnome-extensions pack \
+gnome-extensions pack --force \
     --extra-source indicator.js \
     --extra-source keyboardManager.js \
-    --extra-source setup-permissions.sh
+    --extra-source setup-permissions.sh \
+    --extra-source keyboard-off-symbolic.svg
 
-gnome-extensions install catwalk@annarodrigues.net.shell-extension.zip
+
+gnome-extensions install --force catwalk@annarodrigues.net.shell-extension.zip
 ```
 
 Then log out and back in and manage via
@@ -128,5 +130,5 @@ This writes the new paths into the systemd-tmpfiles rule.
 You can check the logs from the extension using:
 
 ```bash
-journalctl -q /usr/bin/gnome-shell --no-hostname | grep keyboardManager
+journalctl -q /usr/bin/gnome-shell --no-hostname | grep catwalk
 ```
