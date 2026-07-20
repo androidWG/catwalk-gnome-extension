@@ -71,7 +71,7 @@ const KeyboardIndicator = GObject.registerClass(
                 name: "input-keyboard-symbolic",
             });
             this._offIcon = new Gio.FileIcon({
-                file: extensionObject.dir.get_child("keyboard-off.svg"),
+                file: extensionObject.dir.get_child("keyboard-off-symbolic.svg"),
             });
 
             this._indicator = this._addIndicator();
