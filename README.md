@@ -3,7 +3,8 @@
 > *"Enable or disable your laptop's internal keyboard at runtime - no reboot required!"*
 
 Your cat can now freely walk on top of your keyboard while you work; and when you
-use your Linux computer on-the-go, easily disable it via a Quick Settings toggle!
+use your Linux computer on-the-go, easily disable it via a Quick Settings toggle
+OR with a programmable global shortcut!
 
 Uses the kernel `inhibited` sysfs interface (Linux 5.11+). All you need is a `systemd`
 Linux OS, a laptop, and (optional) a cat.
@@ -37,16 +38,23 @@ Copy into GNOME's extensions directory:
 cp -r . ~/.local/share/gnome-shell/extensions/catwalk@neufter.dev
 ```
 
-Alternatively, you can first package the extension using `gnome-extensions pack`, and
-then run:
+## Packaging
+
+First package the extension using `gnome-extensions pack`, and
+then install it:
 
 ```bash
-gnome-extensions install catwalk@neufter.dev.shell-extension.zip
+gnome-extensions pack \
+    --extra-source indicator.js \
+    --extra-source keyboardManager.js \
+    --extra-source setup-permissions.sh
+
+gnome-extensions install catwalk@annarodrigues.net.shell-extension.zip
 ```
 
 Then log out and back in and manage via
 [Extension Manager](https://flathub.org/en/apps/com.mattjakeman.ExtensionManager)
-or GNOME's builtin Extensions app.
+or GNOME's built-in Extensions app.
 
 ## Usage
 
